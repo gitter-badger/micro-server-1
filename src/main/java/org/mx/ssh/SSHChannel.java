@@ -30,13 +30,13 @@ public class SSHChannel {
 
             BufferedReader localBufferedReader = new BufferedReader(new InputStreamReader(channelExec.getInputStream()));
             StringBuilder localStringBuilder = new StringBuilder();
+
             channelExec.setCommand(command);
 
             channelExec.connect();
 
-            for (String str = localBufferedReader.readLine(); str != null; str = localBufferedReader.readLine())
-            {
-                if(localStringBuilder.length()==0){
+            for (String str = localBufferedReader.readLine(); str != null; str = localBufferedReader.readLine()) {
+                if( localStringBuilder.length()==0 ){
                     localStringBuilder.append(str);
                 } else {
                     localStringBuilder.append("\n");

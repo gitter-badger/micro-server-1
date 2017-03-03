@@ -19,18 +19,36 @@ public class SSHShell {
         this.channel = new SSHChannel(connect);
     }
 
-    private String execute(String command) throws IOException, SSHMXException, InterruptedException {
-        String msg = connect.execute(command);
-        String[] lines = msg.split("\r\n");
-        String result = "";
-        for(int i = 1; i < lines.length-1; i++) {
-            String m = lines[i];
-            result += m;
-            if( (i+1) != (lines.length-1) ){
-                result += "\r\n";
+    protected String execute(String command) throws IOException, SSHMXException, InterruptedException {
+        command = "echo '<mx-cmd>'; "+command+"; echo '<mx-cmd/>'; \n";
+        connect.getCommandIO().write(command.getBytes());
+        connect.getCommandIO().flush();
+        connect.getThread().read();
+        while( connect.getThread().isRunning() ){
+            Thread.sleep(30);
+            if(connect.getThread() != null && !connect.getThread().isItAlive()){
+                connect.getThread().setRunning(false);
+                throw new SSHMXException("Thread Stopped");
             }
         }
 
+        String result = connect.getThread().getOutput();
+        result = splitter(result,"<mx-cmd>","<mx-cmd/>");
+        System.out.println(result);
+
+        return result;
+    }
+
+    private String splitter(String value, String start, String end){
+        String[] splitter = value.split(start);
+        String result = "";
+        if( splitter.length > 1){
+            if( splitter[1].indexOf(start) != -1 ){
+                result = splitter(splitter[2],start, end);
+            } else {
+                result = splitter[2].split(end)[0];
+            }
+        }
         return result;
     }
 
@@ -38,8 +56,7 @@ public class SSHShell {
         if (!this.connect.isConnected()) {
             throw new SSHMXException();
         }
-
-        return this.connect.execute(command);
+        return this.execute(command);
     }
 
     public String channelExec(String command) throws IOException,InterruptedException, JSchException {

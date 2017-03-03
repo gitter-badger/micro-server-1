@@ -41,7 +41,7 @@ public class SSHConnect {
     private InputStream sessionOutput = null;
     private InputStream sessionError = null;
 
-    protected OutputThread thread = null;
+    private OutputThread thread = null;
     protected int promptLines = 0;
 
     protected int sessionTimeOut = 300000;
@@ -133,9 +133,11 @@ public class SSHConnect {
             thread.setPassword(this.credential.getPassword().toString());
             thread.start();
 
-            String command = "export PS1='"+success_key+" '";
+
+            String command = "export PS1=\""+success_key+" \"";
             SSHShell sshSession =  new SSHShell(this);
             sshSession.sessionExec(command);
+
         }
 
         return isConnected;
@@ -227,30 +229,11 @@ public class SSHConnect {
         return result;
     }
 
-    protected String execute(String command) throws IOException, SSHMXException, InterruptedException {
-        String msg = "";
-        command = command + "\n";
-        commandIO.write(command.getBytes());
-        commandIO.flush();
-        thread.read();
-        while( thread.isRunning() ){
-            Thread.sleep(30);
-            if(this.thread!=null && !this.thread.live){
-                thread.running=false;
-                throw new SSHMXException("Thread Stopped");
-            }
-        }
-
-        msg = thread.getOutput();
-//        loggerSSH.debug("sessionExec command response: " + msg);
-        return msg;
+    protected OutputThread getThread(){
+        return this.thread;
     }
 
-    public String getLastOutput() {
-        return thread.getLastOutput();
-    }
-
-    private class OutputThread extends Thread {
+    protected class OutputThread extends Thread {
         private String output;
         private boolean live = true;
         private boolean running = true;
@@ -271,6 +254,10 @@ public class SSHConnect {
 
         public boolean isRunning() {
             return running;
+        }
+
+        public void setRunning(boolean value) {
+            this.running = value;
         }
 
         public synchronized void read() {
@@ -321,43 +308,26 @@ public class SSHConnect {
                         System.err.println("input stream closed earlier than expected");
                         System.exit(1);
                     }
-                    //stdOut += new String(tmp, 0, i);
-                    for(int j=0;j<i;j++){
-                        if( tmp[j] == 27){
-                            continue;
-                        } else if( j>0 && ( tmp[j-1] == 27 && tmp[j] == 91) ){
-                            j = j + 3;
-                        } else {
-                            stdOut+= new String(tmp, j, 1);
-                        }
-                    }
+                    stdOut += new String(tmp, 0, i);
 
-                    sshLogger.getLogger().debug("stdOut :"+stdOut);
+                    sshLogger.getLogger().debug("================================STDOUT_BEGIN=================================" );
+                    sshLogger.getLogger().debug(stdOut);
+                    sshLogger.getLogger().debug("================================STDOUT_END===================================" );
+
                     this.setLastOutput(stdOut);
                 }
 
-                if(stdOut.contains("'mx>")){
-                    stdOut = stdOut.replace("'mx>", "");
-                    sshLogger.getLogger().debug("globalVar Replaced ="+stdOut);
-                }
-
-
                 String test = null;
-                if(stdOut.trim().length()>4){
-                    test = stdOut.trim().substring(stdOut.trim().length()-3).trim();
+                if(stdOut.trim().length()>6){
+                    test = stdOut.trim().substring(stdOut.trim().length()-5).trim();
                 } else {
                     test = stdOut.trim();
                 }
 
-//                if( test.trim().endsWith(expect) || test.trim().endsWith("#") || test.trim().endsWith("$")
-//                        || test.trim().endsWith(">") || ( !stdOut.contains("if [") && test.trim().endsWith("]")) ) {
                 if( test.trim().endsWith(expect) ) {
-
                     this.output = stdOut;
-                    output = output.replaceAll("\b", "");
                     stdOut = "";
-                    sshLogger.getLogger().debug("========STDOUT\n" + output + "\n===========");
-                    sshLogger.getLogger().debug("SETTING RUNNING = FALSE => if expect");
+                    sshLogger.getLogger().debug("***********************  READY TO NEXT COMMAND  *****************************" );
                     this.running = false;
                 }
 
@@ -370,25 +340,12 @@ public class SSHConnect {
                     Thread.sleep(30);
                 }
 
-	    		/* N�o sei pq isso est� aqui, e estava dando problema. Estou comentando at� que precise habilitar
-	    		 * cuidado com
-	    		if ( stdOut.contains("ermission denied") || stdErr.contains("ermission denied") ){
-	            	this.output = stdOut;
-	    			output = output.replaceAll("\b", "");
-	    			stdOut = "";
-	    			logger.debug("========STDOUT\n" + output + "\n===========");
-	    			logger.debug("SETTING RUNNING = FALSE => if permission denied");
-	            	this.running = false;
-	    		}
-	    		*/
-
                 String redhatSudo = stdOut.replace("[sudo]", "");
                 redhatSudo = redhatSudo.replace("sudo su -\r\n", "");
 
-                if ( stdOut.contains("assword:") || stdErr.contains("assword:")  ||
+                if( stdOut.contains("assword:") || stdErr.contains("assword:")  ||
                         ( redhatSudo.contains("password for") && redhatSudo. matches("(.+?)password for(.+?)[:].$") ) ) {
 
-                    //String cmd = this.password + "\n";
                     String cmd = this.password + "\n";
                     if( externalPassword != null && !externalPassword.trim().isEmpty() ){
                         cmd = externalPassword+ "\n";
@@ -397,18 +354,9 @@ public class SSHConnect {
                     stdOut = "";
                     commandIO.write(cmd.getBytes());
                     commandIO.flush();
-                    Thread.sleep(30);
+                    Thread.sleep(1000);
                 }
 
-
-                if( ( (stdOut.contains("(current) UNIX password")) || (stdOut.contains("New UNIX password")) || (stdOut.contains("Retype new UNIX password")) || (stdOut.contains("Old password") || stdOut.contains("ew password") || stdOut.contains("Enter the new password again")) ) ) {
-                    this.output = stdOut;
-                    output = output.replaceAll("\b", "");
-                    stdOut = "";
-                    sshLogger.getLogger().debug("========STDOUT\n" + output + "\n===========");
-                    sshLogger.getLogger().debug("SETTING RUNNING = FALSE => change password");
-                    this.running = false;
-                }
                 Thread.sleep(300);
             }
 
@@ -420,7 +368,14 @@ public class SSHConnect {
                 this.lastOutput = this.lastOutput.substring(this.lastOutput.length()-5000);
             }
         }
+
+        public boolean isItAlive(){
+            return live;
+        }
+
+
     }
+
 
     public boolean isConnected() {
         if(session == null) return false;
@@ -441,6 +396,21 @@ public class SSHConnect {
         }
     }
 
+    public InputStream getSessionInput() {
+        return sessionInput;
+    }
+
+    public InputStream getSessionOutput() {
+        return sessionOutput;
+    }
+
+    public InputStream getSessionError() {
+        return sessionError;
+    }
+
+    public PipedOutputStream getCommandIO() {
+        return commandIO;
+    }
 
 }
 
