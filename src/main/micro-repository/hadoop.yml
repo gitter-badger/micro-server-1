@@ -1,0 +1,19 @@
+#########################################################################
+# MXDeploy
+# Copyright  MXDeploy   2016
+# All Rights Reserved.
+# Author:    Fabio Santos B. da Silva
+# Version:   0.0.1
+# Date:      07/05/2016
+# Purpose:   Deployment Suite and Automation
+# URL :      www.mxdeploy.com
+#########################################################################
+---
+
+- hadoop:
+    host: localhost
+    port: 9800
+    repository: /mxdeploy/micro-actions
+
+...
+

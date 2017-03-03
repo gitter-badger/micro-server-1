@@ -1,0 +1,26 @@
+#########################################################################
+# MXDeploy
+# Copyright  MXDeploy   2016
+# All Rights Reserved.
+# Author:    Fabio Santos B. da Silva
+# Version:   0.0.1
+# Date:      07/05/2016
+# Purpose:   Deployment Suite and Automation
+# URL :      www.mxdeploy.com
+#########################################################################
+---
+micro-clients:
+    - micro-server1-client:
+          host: localhost
+          port: 25000
+          truststore_path: ${basedir}/src/main/resources/cacerts
+          log4j_path: ${basedir}/log4j.properties
+
+    - micro-server2-client:
+          host: localhost
+          port: 25001
+          truststore_path: ${basedir}/src/main/resources/cacerts
+          log4j_path: ${basedir}/log4j.properties
+
+...
+

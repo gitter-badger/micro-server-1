@@ -1,0 +1,31 @@
+#########################################################################
+# MXDeploy
+# Copyright MXDeploy   2016
+# All Rights Reserved.
+# Author:    Fabio Santos B. da Silva
+# Version:   0.0.1
+# Date:      07/05/2016
+# Purpose:   Deployment Suite and Automation
+# URL :      www.mxdeploy.com
+#########################################################################
+---
+# ======================++++++++++++++++++++=============================
+# INSTALLATION PATH
+# ======================++++++++++++++++++++=============================
+parent.basedir: /opt/mxdeploy
+basedir: ${parent.basedir}/micro-server
+
+# ======================++++++++++++++++++++=============================
+# Default Micro-Server variables
+# ======================++++++++++++++++++++=============================
+mserver.name: micro-server1
+mserver.log4j: ${basedir}/log4j.properties
+mserver.java.classpath: ${basedir}/src/main/resources
+mserver.jython.modules.path: ${basedir}/src/main/jython/modules
+
+# ======================++++++++++++++++++++=============================
+# Micro-Server-Client
+#    mclient.actionName : Default actionName based on micro-clients.yml
+# ======================++++++++++++++++++++=============================
+mclient.name: micro-server1-client
+...

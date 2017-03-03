@@ -1,0 +1,35 @@
+#########################################################################
+# MXDeploy
+# Copyright  MXDeploy   2016
+# All Rights Reserved.
+# Author:    Fabio Santos B. da Silva
+# Version:   0.0.1
+# Date:      07/05/2016
+# Purpose:   Deployment Suite and Automation
+# URL :      www.mxdeploy.com
+#########################################################################
+---
+micro-servers:
+    - micro-server1:
+          host: localhost
+          session_timeout: 10000
+          port: 25000
+          repository_path: ${parent.basedir}/micro-repository
+          keystore_path: ${basedir}/src/main/resources/cacerts
+          keystore_password: password01
+          keystore_pkgs: com.sun.net.ssl.internal.www.protocol
+          log4j_path: ${basedir}/log4j.properties
+          repo_name: micro-actions1
+
+    - micro-server2:
+          host: localhost
+          port: 25001
+          session_timeout: 10000
+          repository_path: ${parent.basedir}/micro-repository
+          keystore_path: ${basedir}/src/main/resources/cacerts
+          keystore_password: password01
+          keystore_pkgs: com.sun.net.ssl.internal.www.protocol
+          log4j_path: ${basedir}/log4j.properties
+
+...
+

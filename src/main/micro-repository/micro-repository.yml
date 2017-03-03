@@ -1,0 +1,32 @@
+#########################################################################
+# Micro-Server
+# Copyright MXDeploy   2016
+# All Rights Reserved.
+# Author:    Fabio Santos B. da Silva
+# Version:   0.0.1
+# Date:      07/05/2016
+# Purpose:   Deployment Suite and Automation
+# URL :      www.mxdeploy.org
+#########################################################################
+
+---
+# Actions
+micro-actions:
+  - hello-jython:
+      src: ${jython.basedir}/Hello.py
+      async: false
+#      cron: "0/2 * * * * ?"
+  - hello-groovy:
+      src: ${groovy.basedir}/Hello.groovy
+      async: false
+#      cron: "0/5 * * * * ?"
+  - hello-jruby:
+      src: ${jruby.basedir}/Hello.rb
+      async: false
+#      cron: "0/9 * * * * ?"
+  - hello-playbook:
+      src: ${modules.basedir}/hello/hello-playbook.yml
+      async: false
+
+
+...
