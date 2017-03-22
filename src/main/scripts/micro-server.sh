@@ -93,7 +93,7 @@ debug "MX_JAVA_PROPERTIES=$MX_JAVA_PROPERTIES"
 MX_JAVA_PROPERTIES_CLIENT="-Dparent.basedir=$MX_PARENT "
 MCLIENT_NAME="x"
 SCRIPT_ACTION="-list-threads"
-MSERVER_NAME=`grep mserver.name: $MX_PARENT/variables.yml | cut -d':' -f2 | xargs`
+MSERVER_NAME=`grep mserver.name: $MX_PARENT/micro-env-variables.yml | cut -d':' -f2 | xargs`
 
 while [ $# -gt 0 ]
 do

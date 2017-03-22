@@ -34,35 +34,31 @@ validateYml(){
 
 start_server(){
     MSERVER_NAME=$1
-    MX_PID_NAME=$2
+#    MX_PID_NAME=$2
     echo "==== Check micro-server $MSERVER_NAME status"
     SERVER_STATUS=0
-    if [ ! -f $MX_PID_NAME ]; then
-        echo "-------- Micro-Server $MSERVER_NAME is down"
+#    PID=`cat $MX_PID_NAME`
+    STATUS=`ps -ef | grep -v grep | grep $MSERVER_NAME | wc -l`
+    if [ $STATUS -eq 1 ]; then
+        echo "-------- $MSERVER_NAME is already up and running"
+        SERVER_STATUS=1
     else
-        PID=`cat $MX_PID_NAME`
-        STATUS=`ps -ef | grep -v grep | grep $PID | wc -l`
-        if [ $STATUS -eq 1 ]; then
-            echo "-------- $MSERVER_NAME is already up and running"
-            SERVER_STATUS=1
-        else
-            echo "-------- $MSERVER_NAME is down"
-        fi
+        echo "-------- $MSERVER_NAME is down"
     fi
 
     if [[ $SERVER_STATUS == 0 ]]; then
         echo "==== Starting $MSERVER_NAME"
         MX_JAVA_PROPERTIES="$MX_JAVA_PROPERTIES -Dmserver.name=$MSERVER_NAME "
 
-        debug "$MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES -cp $MX_JAVA_CLASSPATH/* org.mx.mserver.MicroServerGateway "
+        debug "$MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES -cp $MX_JAVA_CLASSPATH/* org.mx.server.MicroServerGateway "
         nohup $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.mserver.MicroServerGateway  \
+                   org.mx.server.MicroServerGateway  \
                    > /dev/null 2>&1 & echo $! > $MX_PID_NAME
 
         #$MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES \
         #           -cp "$MX_JAVA_CLASSPATH/*" \
-        #           org.mx.mserver.MicroServerGateway
+        #           org.mx.server.MicroServerGateway
 
         sleep 1
         PID=`cat $MX_PID_NAME`
@@ -80,20 +76,16 @@ start_server(){
 
 restart_server(){
     MSERVER_NAME=$1
-    MX_PID_NAME=$2
+#    MX_PID_NAME=$2
     echo "==== Check micro-server $MSERVER_NAME status"
     SERVER_STATUS=0
-    if [ ! -f $MX_PID_NAME ]; then
-        echo "-------- Micro-Server $MSERVER_NAME is already down"
+#    PID=`cat $MX_PID_NAME`
+    STATUS=`ps -ef | grep -v grep | grep $MSERVER_NAME | wc -l`
+    if [ $STATUS -eq 1 ]; then
+        echo "-------- $MSERVER_NAME is up and running"
+        SERVER_STATUS=1
     else
-        PID=`cat $MX_PID_NAME`
-        STATUS=`ps -ef | grep -v grep | grep $PID | wc -l`
-        if [ $STATUS -eq 1 ]; then
-            echo "-------- $MSERVER_NAME is up and running"
-            SERVER_STATUS=1
-        else
-            echo "-------- $MSERVER_NAME is already down"
-        fi
+        echo "-------- $MSERVER_NAME is already down"
     fi
 
     if [[ $SERVER_STATUS == 1 ]]; then
@@ -103,12 +95,12 @@ restart_server(){
 
         $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.mclient.MicroClient
+                   org.mx.client.MicroClient
     fi
 
     sleep 2
-    PID=`cat $MX_PID_NAME`
-    STATUS=`ps -ef | grep -v grep | grep $PID | wc -l`
+#    PID=`cat $MX_PID_NAME`
+    STATUS=`ps -ef | grep -v grep | grep $MSERVER_NAME | wc -l`
     if [ $STATUS -eq 1 ]; then
         echo "-------- Micro-Server $MSERVER_NAME wasn't stopped, please validate."
         echo "  "
@@ -117,10 +109,10 @@ restart_server(){
         echo "-------- Micro-Server $MSERVER_NAME was shutdown"
         echo "==== Starting $MSERVER_NAME"
         MX_JAVA_PROPERTIES="$MX_JAVA_PROPERTIES -Dmserver.name=$MSERVER_NAME "
-        debug "$MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES -cp $MX_JAVA_CLASSPATH/* org.mx.mserver.MicroServerGateway "
+        debug "$MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES -cp $MX_JAVA_CLASSPATH/* org.mx.server.MicroServerGateway "
         nohup $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.mserver.MicroServerGateway  \
+                   org.mx.server.MicroServerGateway  \
                    > /dev/null 2>&1 & echo $! > $MX_PID_NAME
         sleep 1
         PID=`cat $MX_PID_NAME`
@@ -144,7 +136,7 @@ run(){
 
     $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
               -cp "$MX_JAVA_CLASSPATH/*" \
-               org.mx.mclient.MicroClient $*
+               org.mx.client.MicroClient $*
 }
 
 if [ $# -eq 0 ]; then
@@ -179,7 +171,7 @@ debug "PRG: $PRG"
 debug "MX_PARENT: $MX_PARENT"
 debug "MX_HOME: $MX_HOME"
 
-validateYml "$MX_PARENT/variables.yml"
+validateYml "$MX_PARENT/micro-env-variables.yml"
 validateYml "$MX_HOME/micro-servers.yml"
 
 MX_VERSION=`grep version $MX_HOME/version.yml | cut -d':' -f2 | xargs`
@@ -208,7 +200,7 @@ debug "MX_JAVA_PROPERTIES=$MX_JAVA_PROPERTIES"
 MX_JAVA_PROPERTIES_CLIENT="-Dparent.basedir=$MX_PARENT "
 MCLIENT_NAME="x"
 SCRIPT_ACTION="--list-threads"
-MSERVER_NAME=`grep mserver.name: $MX_PARENT/variables.yml | cut -d':' -f2 | xargs`
+MSERVER_NAME=`grep mserver.name: $MX_PARENT/micro-env-variables.yml | cut -d':' -f2 | xargs`
 RESTART_ACTION="None"
 ACTION_MODULE="None"
 
@@ -269,7 +261,7 @@ debug "MX_PID_NAME: $MX_PID_NAME"
 
 case "$SCRIPT_ACTION" in
     --start)
-        start_server $MSERVER_NAME $MX_PID_NAME
+        start_server $MSERVER_NAME
         ;;
     --stop)
         echo "==== Stopping $MSERVER_NAME"
@@ -278,11 +270,11 @@ case "$SCRIPT_ACTION" in
 
         $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.mclient.MicroClient
+                   org.mx.client.MicroClient
 
         sleep 2
-        PID=`cat $MX_PID_NAME`
-        STATUS=`ps -ef | grep -v grep | grep $PID | wc -l`
+#        PID=`cat $MX_PID_NAME`
+        STATUS=`ps -ef | grep -v grep | grep $MSERVER_NAME | wc -l`
         if [ $STATUS -eq 1 ]; then
             echo "==== Micro-Server $MSERVER_NAME wasn't stopped, please validate."
             echo "  "
@@ -295,32 +287,26 @@ case "$SCRIPT_ACTION" in
 
         ;;
     --restart)
-        restart_server $MSERVER_NAME $MX_PID_NAME
+        restart_server $MSERVER_NAME
         RESTART_ACTION="--restart"
         ;;
     --status)
         debug "STATUS"
-        if [ ! -f $MX_PID_NAME ]; then
-            echo "==== Micro-Server $MX_MSERVER_NAME is down"
-            exit
+#        PID=`cat $MX_PID_NAME`
+        STATUS=`ps -ef | grep -v grep | grep $MSERVER_NAME | wc -l`
+        if [ $STATUS -eq 1 ]; then
+            echo "===== $MX_MSERVER_NAME is up and running"
+            #echo "  PID $PID"
         else
-            PID=`cat $MX_PID_NAME`
-            STATUS=`ps -ef | grep -v grep | grep $PID | wc -l`
-            if [ $STATUS -eq 1 ]; then
-                echo "===== $MX_MSERVER_NAME is up and running"
-                #echo "  PID $PID"
-            else
-                echo "===== $MX_MSERVER_NAME is down"
-                echo "  "
-            fi
+            echo "===== $MX_MSERVER_NAME is down"
+            echo "  "
         fi
 
         ;;
     --run )
-        start_server $MSERVER_NAME $MX_PID_NAME
-
-        echo "===== Executing micro-action $ACTION_NAME"
+        start_server $MSERVER_NAME
         echo "+---------------------------------------------------------------------+"
+        echo "===== Executing micro-action $ACTION_NAME"
         MX_JAVA_PROPERTIES_CLIENT="$MX_JAVA_PROPERTIES_CLIENT -Dmaction.name=$ACTION_NAME -Dmclient.chunktype=1 "
         if [ "$MCLIENT_NAME" != "x" ]; then
             MX_JAVA_PROPERTIES_CLIENT="$MX_JAVA_PROPERTIES_CLIENT -Dmclient.name=$MCLIENT_NAME "
@@ -333,11 +319,11 @@ case "$SCRIPT_ACTION" in
 
         $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.mclient.MicroClient $*
+                   org.mx.client.MicroClient $*
 
         ;;
     --restart-run )
-        restart_server $MSERVER_NAME $MX_PID_NAME
+        restart_server $MSERVER_NAME
         echo "+---------------------------------------------------------------------+"
         echo "===== Executing micro-action $ACTION_NAME"
         MX_JAVA_PROPERTIES_CLIENT="$MX_JAVA_PROPERTIES_CLIENT -Dmaction.name=$ACTION_NAME -Dmclient.chunktype=1 "
@@ -353,7 +339,7 @@ case "$SCRIPT_ACTION" in
 
         $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.mclient.MicroClient $*
+                   org.mx.client.MicroClient $*
 
         ;;
 
@@ -367,7 +353,7 @@ case "$SCRIPT_ACTION" in
 
         $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.mclient.MicroClient
+                   org.mx.client.MicroClient
 
         ;;
 esac

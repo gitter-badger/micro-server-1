@@ -94,11 +94,11 @@
         <version>2.8.3</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-client -->
-    <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-client</artifactId>
-        <version>3.0.0-alpha1</version>
-    </dependency>
+    <!--<dependency>-->
+        <!--<groupId>org.apache.hadoop</groupId>-->
+        <!--<artifactId>hadoop-client</artifactId>-->
+        <!--<version>3.0.0-alpha1</version>-->
+    <!--</dependency>-->
     <dependency>
         <groupId>de.slackspace</groupId>
         <artifactId>openkeepass</artifactId>
@@ -147,7 +147,7 @@
                     <configuration>
                         <target>
                             <!--<exec executable="mxdeploy" failonerror="false">-->
-                                <!--<arg value="&#45;&#45;stop" />-->
+                                <!--<arg source="&#45;&#45;stop" />-->
                             <!--</exec>-->
                             <dependencyfilesets prefix="mydeps."/>
                             <echo>"Creating MXServer"</echo>
@@ -157,25 +157,6 @@
                             <mkdir dir="${mxdeploy.home}/micro-repository"/>
 
                             <echo>"${build.directory}/${build.finalName}"</echo>
-                            <!--copy todir="${mxdeploy.home}/micro-server/src/main/resources">
-                                <fileset refid="mydeps.joda-time:joda-time:jar"/>
-                                <fileset refid="mydeps.commons-io:commons-io:jar"/>
-                                <fileset refid="mydeps.com.jcraft:jsch:jar"/>
-                                <fileset refid="mydeps.org.slf4j:slf4j-log4j12:jar"/>
-                                <fileset refid="mydeps.org.slf4j:slf4j-api:jar"/>
-                                <fileset refid="mydeps.log4j:log4j:jar"/>
-                                <fileset refid="mydeps.com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar"/>
-                                <fileset refid="mydeps.com.fasterxml.jackson.core:jackson-databind:jar"/>
-                                <fileset refid="mydeps.com.fasterxml.jackson.core:jackson-core:jar"/>
-                                <fileset refid="mydeps.com.fasterxml.jackson.core:jackson-annotations:jar"/>
-                                <fileset refid="mydeps.org.yaml:snakeyaml:jar"/>
-                                <fileset refid="mydeps.org.python:jython-standalone:jar"/>
-                                <fileset refid="mydeps.org.codehaus.groovy:groovy-all:jar"/>
-                                <fileset refid="mydeps.org.jruby:jruby-complete:jar"/>
-                                <fileset refid="mydeps.org.quartz-scheduler:quartz:jar"/>
-                                <fileset file="${build.directory}/${build.finalName}.jar"/>
-                                <fileset file="${basedir}/src/main/resources/cacerts" />
-                            </copy-->
                             <copy todir="${mxdeploy.home}/micro-server/src/main/resources">
                                 <fileset file="${build.directory}/${build.finalName}.jar"/>
                                 <fileset file="${basedir}/src/main/resources/cacerts" />
@@ -193,9 +174,9 @@
                             <copy todir="${mxdeploy.home}">
                                 <fileset file="${basedir}/src/main/resources/micro-clients.yml" />
                                 <fileset file="${basedir}/src/main/resources/version.yml" />
-                                <fileset file="${basedir}/src/main/resources/variables.yml" />
+                                <fileset file="${basedir}/src/main/resources/micro-env-variables.yml" />
                                 <fileset file="${basedir}/src/main/scripts/mxdeploy" />
-                                <fileset file="${basedir}/src/main/scripts/micro-server.sh" />
+                                <!--<fileset file="${basedir}/source/main/scripts/micro-server.sh" />-->
                             </copy>
 
                             <symlink resource="${mxdeploy.home}/mxdeploy" link="/usr/local/bin/mxdeploy" failonerror="false"/>

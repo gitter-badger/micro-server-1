@@ -2,10 +2,7 @@ package org.mx.hadoop;
 
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import org.mx.mserver.GlobalVariableService;
-import org.mx.playbook.PlayBook;
-import org.mx.playbook.PlayBookFactory;
-import org.mx.playbook.Task;
+import org.mx.server.GlobalVariableService;
 import org.mx.var.MicroVariableFactory;
 import org.mx.var.MicroVariableMap;
 
@@ -28,13 +25,13 @@ public class HadoopFactory {
         }
     }
 
-    public static Hadoop parser(String ymlPath) throws IOException {
+    public static HadoopBean parser(String ymlPath) throws IOException {
         YAMLFactory factory = new YAMLFactory();
         YAMLParser parser = factory.createParser(new File(ymlPath));
 
         MicroVariableMap variableMap = GlobalVariableService.getActionVariableScope();
 
-        Hadoop hadoop = new Hadoop();
+        HadoopBean hadoop = new HadoopBean();
         int status = 0;
 
         while (parser.nextToken() != null) {

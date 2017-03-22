@@ -1,0 +1,21 @@
+#########################################################################
+# MXDeploy
+# Copyright MXDeploy   2016
+# All Rights Reserved.
+# Author:    Fabio Santos B. da Silva
+# Version:   0.0.1
+# Date:      07/05/2016
+# Purpose:   Deployment Suite and Automation
+# URL :      www.mxdeploy.com
+#########################################################################
+---
+# ======================++++++++++++++++++++=============================
+# INSTALLATION PATH
+# ======================++++++++++++++++++++=============================
+parent.basedir: /opt/mxdeploy
+basedir: ${parent.basedir}/micro-repository
+
+modules.basedir: ${basedir}/src/main/modules
+inventory.basedir: ${basedir}/src/main/micro-inventory
+
+...

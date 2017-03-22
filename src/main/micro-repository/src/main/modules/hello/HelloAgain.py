@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import sys
 
-global variableMap
+global task
 
 print '    HelloAgain Jython'
-message = variableMap.get("message")
-print '    Message : ', message
-print sys.argv
+message = task.getVariables().get("message").getValue()
+task.info('    Message : '+message)
+# print sys.argv
+

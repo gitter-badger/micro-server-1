@@ -3,7 +3,6 @@ package org.mx.var;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import org.mx.maction.MicroActionVariableMap;
 
 import java.io.File;
 import java.io.IOException;

@@ -10,23 +10,83 @@
 #########################################################################
 
 ---
+name: Main Repository
+
+# Log Level
+log-level: DEBUG
+
+# Arguments
+arguments:
+  - name: username
+    value: fsbsilva
+    required: true
+
+  - name: password
+    encrypt: true
+    required: true
+
+# Variables
+variables:
+  - name: webapp
+    array:
+      - localhost
+
+  - name: hello
+    value: hello-var
+# Proxy
+proxies:
+  - name: prox1
+    host: localhost
+    port: 8888
+
+  - name: prox2
+    host: localhost
+    port: 8889
+
+# Domain
+domains:
+  - name: aws.com
+    regexp: .*
+
+  - name: aws.io.com
+    regexp: .*
+
+# Inventory
+inventories:
+  - name: micro-data
+    src: ${inventory.basedir}/micro-inventory.yml
+
+  - name: web-hosts
+    src: ${inventory.basedir}/web-host.yml
+
+# Modules
+micro-modules:
+  - name: secret
+    src: ${modules.basedir}/secret/module.yml
+
+  - name: hello
+    src: ${modules.basedir}/hello/module.yml
+
 # Actions
 micro-actions:
-  - hello-jython:
-      src: ${jython.basedir}/Hello.py
-      async: false
-#      cron: "0/2 * * * * ?"
-  - hello-groovy:
-      src: ${groovy.basedir}/Hello.groovy
-      async: false
-#      cron: "0/5 * * * * ?"
-  - hello-jruby:
-      src: ${jruby.basedir}/Hello.rb
-      async: false
-#      cron: "0/9 * * * * ?"
-  - hello-playbook:
-      src: ${modules.basedir}/hello/hello-playbook.yml
-      async: false
+  - name: hello-jython
+    src: ${modules.basedir}/jython/Hello.py
+    async: false
+#   cron: "0/2 * * * * ?"
+
+  - name: hello-groovy
+    src: ${modules.basedir}/groovy/Hello.groovy
+    async: false
+#   cron: "0/5 * * * * ?"
+
+  - name: hello-jruby
+    src: ${modules.basedir}/jruby/Hello.rb
+    async: false
+#   cron: "0/9 * * * * ?"
+
+  - name: hello-playbook
+    src: ${modules.basedir}/hello/hello-playbook.yml
+    async: false
 
 
 ...

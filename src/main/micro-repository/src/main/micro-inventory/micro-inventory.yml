@@ -1,0 +1,20 @@
+#########################################################################
+# MXDeploy
+# Copyright MXDeploy   2016
+# All Rights Reserved.
+# Author:    Fabio Santos B. da Silva
+# Version:   0.0.1
+# Date:      07/05/2016
+# Purpose:   Deployment Suite and Automation
+# URL :      www.mxdeploy.com
+#########################################################################
+---
+# ======================++++++++++++++++++++=============================
+# MICRO-INVENTORY
+# ======================++++++++++++++++++++=============================
+
+inventories:
+  - name: was-host
+    array:
+      - host1
+      - host2
