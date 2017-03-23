@@ -138,6 +138,11 @@ public class MicroSession extends MicroSessionImpl {
                                     Task task = new Task(microRepository);
                                     task.setArgs(session.getArgs());
                                     task.setSource(scriptPath);
+                                    task.setAsync(session.isASync());
+                                    task.setActionName(session.getActionName());
+                                    if( session.getModuleName() != null && ! session.getModuleName().isEmpty()){
+                                        task.setModuleName(session.getModuleName());
+                                    }
                                     (new ScriptGateway()).execute(task);
                                 }
                             }

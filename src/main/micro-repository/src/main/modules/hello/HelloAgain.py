@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import sys
+# import sys
 
 global task
 
-print '    HelloAgain Jython'
+task.info('HelloAgain Jython - '+task.getValue())
 message = task.getVariables().get("message").getValue()
-task.info('    Message : '+message)
+task.info('Message : '+message)
+
 # print sys.argv
 

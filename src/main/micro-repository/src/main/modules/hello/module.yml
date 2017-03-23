@@ -21,25 +21,13 @@ inventories:
       - server6
       - server7
       - server8
-      - server9
-      - server10
-      - server12
-      - server13
-      - server14
-      - server15
-      - server16
-      - server17
-      - server18
-      - server19
-      - server20
-
 
 thread-groups:
   - name: playbook-thread
     number: 10
-    type: ssh
-    data: ${servers}
     log-level: DEBUG
+    hosts: ${servers}
+
 
 # Actions
 micro-actions:

@@ -93,6 +93,7 @@ public class ScriptGateway {
             container.setClassLoader(this.getClass().getClassLoader());
             container.setArgv(task.getArgs());
             container.setAttribute("task",task);
+            container.setAttribute("data",task.getData().get("data"));
             container.runScriptlet(task.getSource());
 
 //            Ruby runtime;
@@ -140,7 +141,7 @@ public class ScriptGateway {
     private void executeGroovy(Task task) throws JobExecutionException {
         GroovyShell shell = new GroovyShell(ScriptGateway.class.getClassLoader());
         shell.setVariable("task",task);
-
+        shell.setVariable("data",task.getData().get("data"));
         try {
             shell.run(new File(task.getSource()), task.getArgs());
         } catch (IOException e) {
@@ -155,6 +156,7 @@ public class ScriptGateway {
             PySystemState state = new PySystemState();
             PythonInterpreter interpreter = new PythonInterpreter(null, state);
             interpreter.set("task",task);
+            interpreter.set("data", task.getData().get("data"));
 
             PySystemState systemState = interpreter.getSystemState();
 

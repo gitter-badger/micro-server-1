@@ -1,6 +1,7 @@
 package org.mx.job;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by fsbsilva on 3/10/17.
@@ -9,7 +10,7 @@ public class MicroJobInventoryBean {
 
     private String name;
     private String src;
-    private ArrayList<String> array = new ArrayList<String>();
+    private List<String> array = new ArrayList<String>();
     private boolean loaded = false;
 
     public String getName() {
@@ -28,7 +29,7 @@ public class MicroJobInventoryBean {
         this.src = src;
     }
 
-    public ArrayList<String> getArrayList() {
+    public List<String> getList() {
         return array;
     }
 

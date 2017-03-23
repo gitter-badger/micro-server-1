@@ -2,6 +2,7 @@ package org.mx.quartz;
 
 import org.mx.action.MicroActionBean;
 import org.mx.repo.MicroRepositoryBean;
+import org.mx.server.GlobalVariableService;
 import org.quartz.*;
 import org.quartz.impl.DirectSchedulerFactory;
 
@@ -12,7 +13,8 @@ public class JobQuartzSchedulerFactory {
 
     private static Scheduler scheduler = null;
 
-    public static void scheduleJobs(MicroRepositoryBean microRepository){
+    public static void scheduleJobs(){
+        MicroRepositoryBean microRepository = GlobalVariableService.getMicroRepository();
 
         microRepository.getActions().keySet().forEach(microActionName -> {
             MicroActionBean microAction = microRepository.getActions().get(microActionName);

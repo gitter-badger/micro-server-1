@@ -90,8 +90,7 @@ public class MicroServerGateway {
 
 		Runtime.getRuntime().addShutdownHook(new ServerShutdowner(sslSocketThread));
 
-        MicroRepositoryBean microRepository = GlobalVariableService.getMicroRepository();
-        JobQuartzSchedulerFactory.scheduleJobs(microRepository);
+        JobQuartzSchedulerFactory.scheduleJobs();
 	}
 
 

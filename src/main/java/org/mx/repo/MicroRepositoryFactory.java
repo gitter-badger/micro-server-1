@@ -220,14 +220,14 @@ public class MicroRepositoryFactory {
                                 jobThread.setNumber(1);
                                 jobThread.setLogLevel("DEBUG");
                                 microRepository.addThreads(value,jobThread);
-                            } else if (currFieldName.equals("type")) {
-                                jobThread.setType(value);
                             } else if (currFieldName.equals("number")) {
                                 jobThread.setNumber(Integer.valueOf(value));
-                            } else if (currFieldName.equals("data")) {
-                                jobThread.setData(value);
+                            } else if (currFieldName.equals("hosts")) {
+                                jobThread.setHosts(value);
                             } else if (currFieldName.equals("log-level")) {
                                 jobThread.setLogLevel(value);
+                            } else if (currFieldName.equals("array")) {
+                                status=3;
                             }
                         }
                         break;
@@ -263,13 +263,16 @@ public class MicroRepositoryFactory {
                 status = 2;
             } else {
                 if ( status == 3 ){
-                    if( objectName.equals("variables") ){
-                        jobVariable.add(parser.getValueAsString());
-                    } else if ( objectName.equals("inventories") ) {
-                        jobInventory.add(parser.getValueAsString());
+                    if( parser.getValueAsString() != null) {
+                        if (objectName.equals("variables")) {
+                            jobVariable.add(parser.getValueAsString());
+                        } else if (objectName.equals("inventories")) {
+                            jobInventory.add(parser.getValueAsString());
+                        } else if (objectName.equals("thread-groups")) {
+                            jobThread.add(parser.getValueAsString());
+                        }
                     }
                 }
-
             }
         }
 

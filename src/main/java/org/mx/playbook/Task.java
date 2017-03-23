@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by fsbsilva on 3/15/17.
  */
-public class Task {
+public class Task implements Cloneable {
 
     private SSHConnect sshConnect;
     private SSHShell sshShell;
@@ -26,6 +26,10 @@ public class Task {
     private boolean running = false;
     private Map<String, Object> data = new HashMap<String,Object>();
     private String[] args;
+    private boolean async;
+    private String actionName;
+    private String moduleName;
+    private String value;
 
     public Task(MicroRepositoryBean microRepository){
         this.microRepository = microRepository;
@@ -35,12 +39,36 @@ public class Task {
         return microRepository;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     public String[] getArgs() {
         return args;
     }
 
     public void setArgs(String[] args) {
         this.args = args;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public String getActionName() {
+        return actionName;
+    }
+
+    public void setActionName(String actionName) {
+        this.actionName = actionName;
     }
 
     public Map<String, Object> getData() {
@@ -65,6 +93,14 @@ public class Task {
 
     public void setType(boolean type) {
         this.type = type;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 
     public boolean isStopping() {
@@ -172,6 +208,10 @@ public class Task {
         if ( this.ssh().isConnected() ){
             this.ssh().disconnect();
         }
+    }
+
+    public Task clone() throws CloneNotSupportedException {
+        return (Task)super.clone();
     }
 
 }

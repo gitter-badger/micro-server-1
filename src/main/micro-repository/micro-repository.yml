@@ -53,7 +53,7 @@ domains:
 
 # Inventory
 inventories:
-  - name: micro-data
+  - name: micro-hosts
     src: ${inventory.basedir}/micro-inventory.yml
 
   - name: web-hosts

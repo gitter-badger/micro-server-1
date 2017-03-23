@@ -1,5 +1,8 @@
 package org.mx.job;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by fsbsilva on 3/7/17.
  */
@@ -7,9 +10,9 @@ public class MicroJobThreadBean {
 
     private String name;
     private int number;
-    private String data;
-    private String type;
+    private String hosts;
     private String logLevel;
+    private List<String> array = new ArrayList<String>();
 
     public String getName() {
         return name;
@@ -27,20 +30,12 @@ public class MicroJobThreadBean {
         this.number = number;
     }
 
-    public String getType() {
-        return type;
+    public String getHosts() {
+        return hosts;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
+    public void setHosts(String hosts) {
+        this.hosts = hosts;
     }
 
     public String getLogLevel() {
@@ -50,4 +45,13 @@ public class MicroJobThreadBean {
     public void setLogLevel(String logLevel) {
         this.logLevel = logLevel;
     }
+
+    public List<String> getList() {
+        return array;
+    }
+
+    public void add(String inventory) {
+        this.array.add(inventory);
+    }
+
 }

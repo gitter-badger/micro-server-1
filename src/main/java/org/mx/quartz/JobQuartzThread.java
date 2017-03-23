@@ -22,30 +22,28 @@ public class JobQuartzThread implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-            Task task = (Task)context.getJobDetail().getJobDataMap().get("task");
-            MicroRepositoryBean playbookRepo = task.getMicroRepository();
-
-            String inventory = (String)task.getData().get("data");
+            Task playbookTask = (Task)context.getJobDetail().getJobDataMap().get("playbookTask");
+            MicroRepositoryBean playbookRepo = playbookTask.getMicroRepository();
 
             for(String name : playbookRepo.getJobs().keySet() ){
                 MicroJobBean microJobBean = playbookRepo.getJobs().get(name);
-                if( inventory != null ) {
+                if( playbookTask.getValue() == null ) {
                     System.out.println("==> " + name);
-                    logger.debug("Starting Quartz Job with inventory "+inventory);
+//                    logger.debug("Starting Quartz Job with item "+playbookTask.getValue());
                 }
 
                 if (microJobBean.getField().equals("src")) {
-                    Task jobTask = new Task(task.getMicroRepository());
-                    jobTask.setLogLevel(task.getLogLevel());
+                    Task jobTask = playbookTask.clone();
                     jobTask.setSource(microJobBean.getValue());
-                    jobTask.setArgs(task.getArgs());
-
+                    jobTask.setValue(playbookTask.getValue());
                     (new ScriptGateway()).execute(jobTask);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JobExecutionException e) {
+            e.printStackTrace();
+        } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
     }
