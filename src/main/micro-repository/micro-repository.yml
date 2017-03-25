@@ -33,13 +33,10 @@ variables:
 
   - name: hello
     value: hello-var
+
 # Proxy
 proxies:
-  - name: prox1
-    host: localhost
-    port: 8888
-
-  - name: prox2
+  - name: proxy
     host: localhost
     port: 8889
 

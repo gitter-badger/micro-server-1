@@ -19,9 +19,9 @@ public class MicroRepositoryBean implements Cloneable {
 
     private Map<String, MicroModule> modules = new HashMap<String, MicroModule>();
 
-    private Map<String, MicroJobProxyBean> proxies = new HashMap<String, MicroJobProxyBean>();
+    private List<MicroJobProxyBean> proxies = new ArrayList<MicroJobProxyBean>();
 
-    private Map<String, MicroJobDomainBean> domains = new HashMap<String, MicroJobDomainBean>();
+    private List< MicroJobDomainBean> domains = new ArrayList<MicroJobDomainBean>();
 
     private Map<String, MicroJobInventoryBean> inventories = new HashMap<String, MicroJobInventoryBean>();
 
@@ -31,7 +31,7 @@ public class MicroRepositoryBean implements Cloneable {
 
     private Map<String, MicroJobArgumentBean> arguments = new HashMap<String, MicroJobArgumentBean>();
 
-    private Map<String, MicroJobBean> jobs = new HashMap<String, MicroJobBean>();
+    private List<MicroJobBean> jobs = new ArrayList<MicroJobBean>();
 
     private Map<String, MicroJobThreadBean> threads = new HashMap<String, MicroJobThreadBean>();
 
@@ -75,20 +75,20 @@ public class MicroRepositoryBean implements Cloneable {
         this.modules.put(name,microModule);
     }
 
-    public Map<String, MicroJobProxyBean> getProxies() {
+    public List<MicroJobProxyBean> getProxies() {
         return proxies;
     }
 
-    public void addProxy(String name, MicroJobProxyBean jobProxy) {
-        this.proxies.put(name, jobProxy);
+    public void addProxy(MicroJobProxyBean jobProxy) {
+        this.proxies.add(jobProxy);
     }
 
-    public Map<String, MicroJobDomainBean> getDomains() {
+    public List< MicroJobDomainBean> getDomains() {
         return domains;
     }
 
-    public void addDomain(String name, MicroJobDomainBean jobDomain) {
-        this.domains.put(name, jobDomain);
+    public void addDomain(MicroJobDomainBean jobDomain) {
+        this.domains.add(jobDomain);
     }
 
     public String getLogLevel() {
@@ -124,12 +124,12 @@ public class MicroRepositoryBean implements Cloneable {
     }
 
 
-    public Map<String, MicroJobBean> getJobs() {
+    public List<MicroJobBean> getJobs() {
         return jobs;
     }
 
-    public void addJob(String name, MicroJobBean microJob){
-        this.jobs.put(name,microJob);
+    public void addJob(MicroJobBean microJob){
+        this.jobs.add(microJob);
     }
 
     public Map<String, MicroJobThreadBean> getThreads() {

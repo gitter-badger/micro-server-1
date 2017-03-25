@@ -139,12 +139,13 @@ public class ScriptGateway {
     }
 
     private void executeGroovy(Task task) throws JobExecutionException {
-        GroovyShell shell = new GroovyShell(ScriptGateway.class.getClassLoader());
-        shell.setVariable("task",task);
-        shell.setVariable("data",task.getData().get("data"));
         try {
+            GroovyShell shell = new GroovyShell(ScriptGateway.class.getClassLoader());
+            shell.setVariable("task",task);
+            shell.setVariable("data",task.getData().get("data"));
+
             shell.run(new File(task.getSource()), task.getArgs());
-        } catch (IOException e) {
+        } catch (Throwable e) {
             e.printStackTrace();
             throw new JobExecutionException(e.getMessage());
         }

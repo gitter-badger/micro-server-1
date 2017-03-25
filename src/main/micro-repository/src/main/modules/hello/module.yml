@@ -27,6 +27,8 @@ thread-groups:
     number: 10
     log-level: DEBUG
     hosts: ${servers}
+    username: fsbsilva
+    password: password01
 
 
 # Actions

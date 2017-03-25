@@ -38,6 +38,7 @@ public class PlayBookManager {
 
     public void execute() throws JobExecutionException {
         MicroJobThreadBean microJobThread = getMicroJobThread();
+
         if( microJobThread != null ){
             executeThread(microJobThread);
         } else {
@@ -53,12 +54,12 @@ public class PlayBookManager {
             jobQuartzThreadProvider.initProvider(microJobThread.getNumber());
             Scheduler scheduler = jobQuartzThreadProvider.getScheduler();
 
-            for ( String value : list ) {
-                Task playbookTask = this.task.clone();
-                playbookTask.setValue(value);
-//                System.out.println("Value: "+value);
+            for( String value : list ) {
+                 Task playbookTask = this.task.clone();
+                 playbookTask.setThread(microJobThread);
+                 playbookTask.setValue(value);
 
-                jobQuartzThreadProvider.execute(playbookTask);
+                 jobQuartzThreadProvider.execute(playbookTask);
             }
 
             if( this.task.isAsync() ) {
@@ -87,11 +88,7 @@ public class PlayBookManager {
             JobQuartzThreadProvider jobQuartzThreadProvider = new JobQuartzThreadProvider();
             jobQuartzThreadProvider.initProvider(1);
 
-            Task task = new Task(playbookRepo);
-            task.setArgs(task.getArgs());
-            task.setLogLevel(playbookRepo.getLogLevel());
-
-            jobQuartzThreadProvider.execute(task);
+            jobQuartzThreadProvider.execute(this.task);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }

@@ -139,7 +139,7 @@ public class MicroRepositoryFactory {
                         if (objectName.equals("jobs")) {
                             if (currFieldName.equals("name")) {
                                 job.setName(value);
-                                microRepository.addJob(value, job);
+                                microRepository.addJob(job);
                             } else {
                                 if (currFieldName.equals("src")) {
                                     value = variableMap.replace(value);
@@ -226,6 +226,10 @@ public class MicroRepositoryFactory {
                                 jobThread.setHosts(value);
                             } else if (currFieldName.equals("log-level")) {
                                 jobThread.setLogLevel(value);
+                            } else if (currFieldName.equals("username")) {
+                                jobThread.setUsername(value);
+                            } else if (currFieldName.equals("password")) {
+                                jobThread.setPassword(value);
                             } else if (currFieldName.equals("array")) {
                                 status=3;
                             }

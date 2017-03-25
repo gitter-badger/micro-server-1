@@ -12,6 +12,8 @@ public class MicroJobThreadBean {
     private int number;
     private String hosts;
     private String logLevel;
+    private String username;
+    private String password;
     private List<String> array = new ArrayList<String>();
 
     public String getName() {
@@ -54,4 +56,19 @@ public class MicroJobThreadBean {
         this.array.add(inventory);
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

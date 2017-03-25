@@ -28,7 +28,10 @@ arguments:
     password: true
 
 jobs:
-  - name: Task 01
+  - name: Job 01
     src: ${modules.basedir}/hello/HelloAgain.py
+
+  - name: Job 02
+    src: ${modules.basedir}/hello/JobGroovy.groovy
 
 ...

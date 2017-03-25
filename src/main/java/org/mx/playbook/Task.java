@@ -6,6 +6,7 @@ import org.mx.ssh.SSHConnect;
 import org.mx.ssh.SSHShell;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,18 +19,16 @@ public class Task implements Cloneable {
     private MicroRepositoryBean microRepository;
     private String source;
     private boolean type;
-    private boolean stopping = false;
     private String logLevel = "INFO";
-    private boolean first = true;
-    private boolean hasError = false;
-    private boolean complete = false;
-    private boolean running = false;
     private Map<String, Object> data = new HashMap<String,Object>();
     private String[] args;
     private boolean async;
     private String actionName;
     private String moduleName;
     private String value;
+    private MicroJobThreadBean thread;
+    private String username;
+    private String password;
 
     public Task(MicroRepositoryBean microRepository){
         this.microRepository = microRepository;
@@ -45,6 +44,22 @@ public class Task implements Cloneable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String[] getArgs() {
@@ -83,6 +98,14 @@ public class Task implements Cloneable {
         return source;
     }
 
+    public MicroJobThreadBean getThread() {
+        return thread;
+    }
+
+    public void setThread(MicroJobThreadBean thread) {
+        this.thread = thread;
+    }
+
     public void setSource(String source) {
         this.source = source;
     }
@@ -103,46 +126,6 @@ public class Task implements Cloneable {
         this.async = async;
     }
 
-    public boolean isStopping() {
-        return stopping;
-    }
-
-    public void setStopping(boolean stopping) {
-        this.stopping = stopping;
-    }
-
-    public boolean isFirst() {
-        return first;
-    }
-
-    public void setFirst(boolean first) {
-        this.first = first;
-    }
-
-    public boolean hasError() {
-        return hasError;
-    }
-
-    public void setHasError(boolean hasError) {
-        this.hasError = hasError;
-    }
-
-    public boolean isComplete() {
-        return complete;
-    }
-
-    public void setComplete(boolean complete) {
-        this.complete = complete;
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
     public Map<String, MicroJobVariableBean> getVariables(){
         return this.microRepository.getVariables();
     }
@@ -151,11 +134,11 @@ public class Task implements Cloneable {
         return this.microRepository.getArguments();
     }
 
-    public Map<String, MicroJobProxyBean> getProxies(){
+    public List<MicroJobProxyBean> getProxies(){
         return this.microRepository.getProxies();
     }
 
-    public Map<String, MicroJobDomainBean> getDomains(){
+    public List<MicroJobDomainBean> getDomains(){
         return this.microRepository.getDomains();
     }
 
@@ -199,15 +182,6 @@ public class Task implements Cloneable {
     public void debug(String value){
         if( logLevel.equals("ERROR") || logLevel.equals("INFO") || logLevel.equals("WARN") || logLevel.equals("DEBUG") )
             System.out.println("    "+value);
-    }
-
-	public void stopJob() {
-        this.running = false;
-        this.complete = true;
-        setStopping(true);
-        if ( this.ssh().isConnected() ){
-            this.ssh().disconnect();
-        }
     }
 
     public Task clone() throws CloneNotSupportedException {
