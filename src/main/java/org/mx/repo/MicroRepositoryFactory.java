@@ -170,7 +170,7 @@ public class MicroRepositoryFactory {
                         } else if (objectName.equals("proxies")) {
                             if (currFieldName.equals("name")) {
                                 jobProxy.setName(value);
-                                microRepository.addProxy(value, jobProxy);
+                                microRepository.addProxy(jobProxy);
                             } else if (currFieldName.equals("host")) {
                                 jobProxy.setHost(value);
                             } else if (currFieldName.equals("port")) {
@@ -190,7 +190,7 @@ public class MicroRepositoryFactory {
                         } else if (objectName.equals("domains")) {
                             if (currFieldName.equals("name")) {
                                 jobDomain.setName(value);
-                                microRepository.addDomain(value, jobDomain);
+                                microRepository.addDomain(jobDomain);
                             } else if (currFieldName.equals("regexp")) {
                                 jobDomain.setRegexp(value);
                             }
