@@ -17,7 +17,7 @@ public class HadoopFactory {
     public static void main(String[] args){
         try {
             MicroVariableMap varActionMap = MicroVariableFactory.parser("/opt/mxdeploy/micro-actions/variables.yml");
-            GlobalVariableService.setActionVariableScope(varActionMap);
+            GlobalVariableService.setRepositoryEnvironmentVariable(varActionMap);
 
             HadoopFactory.parser("/opt/mxdeploy/micro-actions/hadoop.yml");
         } catch (IOException e) {
@@ -29,7 +29,7 @@ public class HadoopFactory {
         YAMLFactory factory = new YAMLFactory();
         YAMLParser parser = factory.createParser(new File(ymlPath));
 
-        MicroVariableMap variableMap = GlobalVariableService.getActionVariableScope();
+        MicroVariableMap variableMap = GlobalVariableService.getRepositoryEnvironmentVariable();
 
         HadoopBean hadoop = new HadoopBean();
         int status = 0;

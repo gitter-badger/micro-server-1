@@ -54,7 +54,7 @@ public class ScriptGateway {
             new Throwable("The JVM option -Dmx.mserver.home must to be declared during start up!");
         }
 
-        MicroVariableMap microVariableMap = GlobalVariableService.getGlobalVariable();
+        MicroVariableMap microVariableMap = GlobalVariableService.getMicroServerEnvironmetVariable();
         MX_JAVA_CLASSPATH = microVariableMap.get("mserver.java.classpath");
         MX_JYTHON_MODULES_PATH = microVariableMap.get("mserver.jython.modules.path");
     }
@@ -157,8 +157,6 @@ public class ScriptGateway {
             PySystemState state = new PySystemState();
             PythonInterpreter interpreter = new PythonInterpreter(null, state);
             interpreter.set("task",task);
-            interpreter.set("data", task.getData().get("data"));
-
             PySystemState systemState = interpreter.getSystemState();
 
             if (task.getArgs() != null && task.getArgs().length > 0) {

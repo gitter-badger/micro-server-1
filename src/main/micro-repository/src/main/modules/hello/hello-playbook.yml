@@ -13,7 +13,6 @@
 # Playbook
 name: Hello Playbook
 thread-name: playbook-thread
-log-level: DEBUG
 
 variables:
   - name: message

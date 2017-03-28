@@ -18,7 +18,7 @@ log-level: DEBUG
 # Arguments
 arguments:
   - name: username
-    value: fsbsilva
+    value: fsilva
     required: true
 
   - name: password
@@ -33,20 +33,6 @@ variables:
 
   - name: hello
     value: hello-var
-
-# Proxy
-proxies:
-  - name: proxy
-    host: localhost
-    port: 8889
-
-# Domain
-domains:
-  - name: aws.com
-    regexp: .*
-
-  - name: aws.io.com
-    regexp: .*
 
 # Inventory
 inventories:

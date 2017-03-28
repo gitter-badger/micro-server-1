@@ -21,7 +21,7 @@ public class MicroModuleFactory {
     public static void main(String[] args){
         try {
 //            MicroVariableMap varActionMap = MicroVariableFactory.parser("/opt/mxdeploy/micro-actions/variables.yml");
-//            GlobalVariableService.setActionVariableScope(varActionMap);
+//            GlobalVariableService.setRepositoryEnvironmentVariable(varActionMap);
 
             MicroModuleFactory.parser(null,"/opt/mxdeploy/micro-actions/src/main/modules/resolv-conf/module.yml");
         } catch (IOException e) {
@@ -40,7 +40,7 @@ public class MicroModuleFactory {
         MicroModule module = new MicroModule();
         MicroActionBean action = null;
 
-        MicroVariableMap variableMap = GlobalVariableService.getActionVariableScope();
+        MicroVariableMap variableMap = GlobalVariableService.getRepositoryEnvironmentVariable();
 
         int status = 0;
         String objectName="None" ;

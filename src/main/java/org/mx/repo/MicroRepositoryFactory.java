@@ -21,8 +21,8 @@ public class MicroRepositoryFactory {
 
     public static void main(String[] args){
         try {
-            MicroVariableMap varActionMap = MicroVariableFactory.parser("/opt/mxdeploy/micro-repository/variables.yml");
-            GlobalVariableService.setActionVariableScope(varActionMap);
+            MicroVariableMap varActionMap = MicroVariableFactory.parser("/opt/mxdeploy/micro-repository/micro-env-variables.yml");
+            GlobalVariableService.setRepositoryEnvironmentVariable(varActionMap);
 
             MicroRepositoryBean map = MicroRepositoryFactory.parser(null,"/opt/mxdeploy/micro-repository/micro-repository.yml");
         } catch (IOException e) {
@@ -61,7 +61,7 @@ public class MicroRepositoryFactory {
 
         MicroActionBean action = null;
 
-        MicroVariableMap variableMap = GlobalVariableService.getActionVariableScope();
+        MicroVariableMap variableMap = GlobalVariableService.getRepositoryEnvironmentVariable();
 
         MicroModule module = null;
         MicroJobProxyBean jobProxy = null;
@@ -167,17 +167,39 @@ public class MicroRepositoryFactory {
                                 value = variableMap.replace(value);
                                 module.setSrc(value);
                             }
-                        } else if (objectName.equals("proxies")) {
+                        } else if (objectName.equals("proxies") ) {
                             if (currFieldName.equals("name")) {
+                                MicroJobProxyBean bean = microRepository.getProxies().get(value);
+                                if( bean != null){
+                                    jobProxy = bean;
+                                }
                                 jobProxy.setName(value);
-                                microRepository.addProxy(jobProxy);
+                                microRepository.addProxy(value,jobProxy);
                             } else if (currFieldName.equals("host")) {
                                 jobProxy.setHost(value);
                             } else if (currFieldName.equals("port")) {
                                 jobProxy.setPort(Integer.valueOf(value));
+                            } else if (currFieldName.equals("domains") ) {
+                                objectName = "domains";
+                                status=1;
+                            }
+                        } else if (objectName.equals("domains")) {
+                            if (currFieldName.equals("name")) {
+                                MicroJobDomainBean bean = jobProxy.getDomains().get(value);
+                                if( bean != null ){
+                                    jobDomain = bean;
+                                }
+                                jobDomain.setName(value);
+                                jobProxy.addDomain(value, jobDomain);
+                            } else if (currFieldName.equals("regexp")) {
+                                jobDomain.setRegexp(value);
                             }
                         } else if (objectName.equals("inventories")) {
                             if (currFieldName.equals("name")) {
+                                MicroJobInventoryBean bean = microRepository.getInventories().get(value);
+                                if( bean != null ){
+                                    jobInventory = bean;
+                                }
                                 jobInventory.setName(value);
                                 jobInventory.setLoaded(isLoaded);
                                 microRepository.addInventory(value, jobInventory);
@@ -187,15 +209,12 @@ public class MicroRepositoryFactory {
                             } else if (currFieldName.equals("array")) {
                                 status=3;
                             }
-                        } else if (objectName.equals("domains")) {
-                            if (currFieldName.equals("name")) {
-                                jobDomain.setName(value);
-                                microRepository.addDomain(jobDomain);
-                            } else if (currFieldName.equals("regexp")) {
-                                jobDomain.setRegexp(value);
-                            }
                         } else if (objectName.equals("arguments")) {
                             if (currFieldName.equals("name")) {
+                                MicroJobArgumentBean bean = microRepository.getArguments().get(value);
+                                if( bean != null ){
+                                    jobArgument = bean;
+                                }
                                 jobArgument.setName(value);
                                 microRepository.addArgument(value, jobArgument);
                             } else if (currFieldName.equals("value")) {
@@ -207,6 +226,10 @@ public class MicroRepositoryFactory {
                             }
                         } else if (objectName.equals("variables")) {
                             if (currFieldName.equals("name")) {
+                                MicroJobVariableBean bean = microRepository.getVariables().get(value);
+                                if( bean != null ){
+                                    jobVariable = bean;
+                                }
                                 jobVariable.setName(value);
                                 microRepository.addVariable(value, jobVariable);
                             } else if (currFieldName.equals("value")) {
@@ -216,6 +239,10 @@ public class MicroRepositoryFactory {
                             }
                         } else if (objectName.equals("thread-groups")) {
                             if (currFieldName.equals("name")) {
+                                MicroJobThreadBean threadBeanFromRepo = microRepository.getThreads().get(value);
+                                if( threadBeanFromRepo != null ){
+                                    jobThread = threadBeanFromRepo;
+                                }
                                 jobThread.setName(value);
                                 jobThread.setNumber(1);
                                 jobThread.setLogLevel("DEBUG");
@@ -230,6 +257,12 @@ public class MicroRepositoryFactory {
                                 jobThread.setUsername(value);
                             } else if (currFieldName.equals("password")) {
                                 jobThread.setPassword(value);
+                            } else if (currFieldName.equals("session-timeout")) {
+                                jobThread.setSessionTimeout(Integer.valueOf(value));
+                            } else if (currFieldName.equals("connection-timeout")) {
+                                jobThread.setConnectionTimeout(Integer.valueOf(value));
+                            } else if (currFieldName.equals("proxy-name")) {
+                                jobThread.setProxyName(value);
                             } else if (currFieldName.equals("array")) {
                                 status=3;
                             }
@@ -237,44 +270,47 @@ public class MicroRepositoryFactory {
                         break;
                     }
                 }
-            } else if ( status == 1 && currTokenName.equals("START_OBJECT") ){
-                if( objectName.equals("inventories") ){
+            } else if ( status == 1 && currTokenName.equals("START_OBJECT") ) {
+                if (objectName.equals("inventories")) {
                     jobInventory = new MicroJobInventoryBean();
-                } else if ( objectName.equals("proxies") ){
+                } else if (objectName.equals("proxies")) {
                     jobProxy = new MicroJobProxyBean();
-                } else if ( objectName.equals("micro-actions") ) {
+                } else if (objectName.equals("micro-actions")) {
                     action = new MicroActionBean();
-                } else if (objectName.equals("micro-modules") ) {
+                } else if (objectName.equals("micro-modules")) {
                     module = new MicroModule();
-                } else if (objectName.equals("domains") ) {
-                    jobDomain = new MicroJobDomainBean();
-                } else if (objectName.equals("arguments") ) {
+                } else if (objectName.equals("arguments")) {
                     jobArgument = new MicroJobArgumentBean();
-                } else if (objectName.equals("variables") ) {
+                } else if (objectName.equals("variables")) {
                     jobVariable = new MicroJobVariableBean();
-                } else if( objectName.equals("jobs") ){
+                } else if (objectName.equals("jobs")) {
                     job = new MicroJobBean();
-                } else if ( objectName.equals("thread-groups") ){
+                } else if (objectName.equals("thread-groups")) {
                     jobThread = new MicroJobThreadBean();
+                } else if (objectName.equals("domains")) {
+                    jobDomain = new MicroJobDomainBean();
                 }
                 status = 2;
             } else if ( status == 2 && currTokenName.equals("END_OBJECT") ){
                 status = 1;
             } else if ( status == 1 && currTokenName.equals("END_ARRAY") ){
-                objectName = "None";
-                status = 0;
+                if( objectName.equals("domains")){
+                    objectName = "proxies";
+                    status=2;
+                } else {
+                    objectName = "None";
+                    status = 0;
+                }
             } else if ( status == 3 && currTokenName.equals("END_ARRAY") ){
                 status = 2;
-            } else {
-                if ( status == 3 ){
-                    if( parser.getValueAsString() != null) {
-                        if (objectName.equals("variables")) {
-                            jobVariable.add(parser.getValueAsString());
-                        } else if (objectName.equals("inventories")) {
-                            jobInventory.add(parser.getValueAsString());
-                        } else if (objectName.equals("thread-groups")) {
-                            jobThread.add(parser.getValueAsString());
-                        }
+            } else if ( status == 3 ){
+                if( parser.getValueAsString() != null) {
+                    if (objectName.equals("variables")) {
+                        jobVariable.add(parser.getValueAsString());
+                    } else if (objectName.equals("inventories")) {
+                        jobInventory.add(parser.getValueAsString());
+                    } else if (objectName.equals("thread-groups")) {
+                        jobThread.add(parser.getValueAsString());
                     }
                 }
             }

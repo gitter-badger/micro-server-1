@@ -13,22 +13,31 @@
 inventories:
   - name: servers
     array:
-      - server1
-      - server2
-      - server3
-      - server4
-      - server5
-      - server6
-      - server7
-      - server8
+      - localhost
+
+# Proxy
+proxies:
+  - name: proxy
+    host: localhost
+    port: 8889
+    domains:
+      - name: aws.com
+        regexp: .*
+
+      - name: aws.com.br
+        regexp: .*
 
 thread-groups:
   - name: playbook-thread
-    number: 10
+    number: 3
     log-level: DEBUG
-    hosts: ${servers}
-    username: fsbsilva
-    password: password01
+    hosts: servers
+    proxy-name: proxy
+    username: fsilva
+    password: xxxxx
+    connection-timeout: 5000
+    session-timeout: 30000
+
 
 
 # Actions

@@ -11,18 +11,18 @@ import java.util.HashMap;
  */
 public class GlobalVariableService {
 
-    private static MicroVariableMap globalVariable;
-    private static MicroVariableMap actionVariableScope;
+    private static MicroVariableMap microServerEnvironmetVariable;
+    private static MicroVariableMap repositoryEnvironmentVariable;
     private static MicroServer microServer;
     private static MicroRepositoryBean microRepository;
     private static HashMap<String,Scheduler> threads = new HashMap<String,Scheduler>();
 
-    public static MicroVariableMap getGlobalVariable() {
-        return globalVariable;
+    public static MicroVariableMap getMicroServerEnvironmetVariable() {
+        return microServerEnvironmetVariable;
     }
 
-    public static void setGlobalVariable(MicroVariableMap globalVariable) {
-        GlobalVariableService.globalVariable = globalVariable;
+    public static void setMicroServerEnvironmetVariable(MicroVariableMap microServerEnvironmetVariable) {
+        GlobalVariableService.microServerEnvironmetVariable = microServerEnvironmetVariable;
     }
 
     public static MicroServer getMicroServer() {
@@ -33,12 +33,12 @@ public class GlobalVariableService {
         GlobalVariableService.microServer = microServer;
     }
 
-    public static MicroVariableMap getActionVariableScope() {
-        return actionVariableScope;
+    public static MicroVariableMap getRepositoryEnvironmentVariable() {
+        return repositoryEnvironmentVariable;
     }
 
-    public static void setActionVariableScope(MicroVariableMap actionVariableScope) {
-        GlobalVariableService.actionVariableScope = actionVariableScope;
+    public static void setRepositoryEnvironmentVariable(MicroVariableMap repositoryEnvironmentVariable) {
+        GlobalVariableService.repositoryEnvironmentVariable = repositoryEnvironmentVariable;
     }
 
     public static MicroRepositoryBean getMicroRepository() {

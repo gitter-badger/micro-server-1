@@ -14,6 +14,10 @@ public class MicroJobThreadBean {
     private String logLevel;
     private String username;
     private String password;
+    private int sessionTimeout;
+    private int connectionTimeout;
+    private String proxyName;
+
     private List<String> array = new ArrayList<String>();
 
     public String getName() {
@@ -38,6 +42,22 @@ public class MicroJobThreadBean {
 
     public void setHosts(String hosts) {
         this.hosts = hosts;
+    }
+
+    public int getSessionTimeout() {
+        return sessionTimeout;
+    }
+
+    public void setSessionTimeout(int sessionTimeout) {
+        this.sessionTimeout = sessionTimeout;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
     }
 
     public String getLogLevel() {
@@ -70,5 +90,13 @@ public class MicroJobThreadBean {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProxyName() {
+        return proxyName;
+    }
+
+    public void setProxyName(String proxyName) {
+        this.proxyName = proxyName;
     }
 }

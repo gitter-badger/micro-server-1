@@ -22,7 +22,7 @@ public class MicroServerFactory {
     public static void main(String[] args){
         try {
             MicroVariableMap varMap = MicroVariableFactory.parser("/opt/mxdeploy/variables.yml");
-            GlobalVariableService.setGlobalVariable(varMap);
+            GlobalVariableService.setMicroServerEnvironmetVariable(varMap);
             PropertyConfigurator.configure("/opt/mxdeploy/micro-server/log4j.properties");
             MicroServerFactory.parser("/opt/mxdeploy/micro-server/micro-servers.yml");
         } catch (IOException e) {
@@ -36,7 +36,7 @@ public class MicroServerFactory {
         YAMLFactory factory = new YAMLFactory();
         YAMLParser parser = factory.createParser(new File(ymlPath));
         MicroServer mserver = null;
-        MicroVariableMap microVariableMap = GlobalVariableService.getGlobalVariable();
+        MicroVariableMap microVariableMap = GlobalVariableService.getMicroServerEnvironmetVariable();
         int status = -1;
 
         while (parser.nextToken() != null) {

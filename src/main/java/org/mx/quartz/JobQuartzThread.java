@@ -3,10 +3,10 @@ package org.mx.quartz;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.ProxySOCKS5;
 import org.apache.log4j.Logger;
-import org.mx.action.MicroActionBean;
 import org.mx.job.MicroJobBean;
 import org.mx.job.MicroJobDomainBean;
 import org.mx.job.MicroJobProxyBean;
+import org.mx.oauth.client.Credential;
 import org.mx.playbook.Task;
 import org.mx.repo.MicroRepositoryBean;
 import org.mx.server.ScriptGateway;
@@ -16,6 +16,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,38 +50,102 @@ public class JobQuartzThread implements Job {
                 }
             }
         } catch (IOException e) {
+            logger.error(e.getMessage());
             e.printStackTrace();
         } catch (JobExecutionException e) {
+            logger.error(e.getMessage());
             e.printStackTrace();
         } catch (CloneNotSupportedException e) {
+            logger.error(e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void connectSSH(Task playbookTask){
-        if( playbookTask.getProxies().size() > 0) {
-            for (MicroJobProxyBean proxy : playbookTask.getProxies()) {
-                ProxySOCKS5 proxySOCKS5 = new ProxySOCKS5(proxy.getHost(), proxy.getPort());
-                SSHConnect sshConnect = new SSHConnect();
-                sshConnect.setProxySOCKS5(proxySOCKS5);
-                playbookTask.setSSHConnect(sshConnect);
-            }
-        } else {
+    private void connectSSH(Task playbookTask) throws JobExecutionException {
+        SSHConnect sshConnect = new SSHConnect();
+        playbookTask.setSSHConnect(sshConnect);
+        String serverDomain = null;
 
+        MicroJobProxyBean proxy = null;
+
+        if( playbookTask.getThread()!= null ) {
+            String proxyName = playbookTask.getThread().getProxyName();
+            String username = playbookTask.getThread().getUsername();
+            String password = playbookTask.getThread().getPassword();
+            if (playbookTask.getProxies() != null && proxyName != null) {
+                proxy = playbookTask.getProxies().get(proxyName);
+                if (proxy == null) {
+                    logger.error("Proxy name " + proxyName + " doesn't exist");
+                    throw new JobExecutionException("Proxy name " + proxyName + " doesn't exist");
+                }
+            }
+
+            if( username == null || username.isEmpty()){
+                logger.error("Username is empty ");
+                throw new JobExecutionException("Username is empty ");
+            }
+
+            if( password == null || password.isEmpty()){
+                logger.error("Password is empty ");
+                throw new JobExecutionException("Username is empty ");
+            }
+
+            if (proxy != null) {
+                ProxySOCKS5 proxySOCKS5 = new ProxySOCKS5(proxy.getHost(), proxy.getPort());
+                sshConnect.setProxySOCKS5(proxySOCKS5);
+
+                serverDomain = getProxyServerDomain(playbookTask, proxySOCKS5);
+                if (serverDomain != null) {
+                    playbookTask.setValue(serverDomain);
+                }
+            }
+
+            // It means that if it is using Proxy and got null, probably server doesn't exist or it is down
+            if (serverDomain != null) {
+                Credential credential = new Credential();
+                credential.setUserName(username);
+                credential.setPassword(password, false);
+
+                sshConnect.setConnectionTimeOut(playbookTask.getThread().getConnectionTimeout());
+                sshConnect.setSessionTimeOut(playbookTask.getThread().getSessionTimeout());
+                try {
+                    sshConnect.connect(serverDomain, credential);
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                    e.printStackTrace();
+                } catch (JSchException e) {
+                    logger.error(e.getMessage());
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                logger.error("Server " + playbookTask.getValue() + " doesn't exist or it is down");
+                throw new JobExecutionException("Server " + playbookTask.getValue() + " doesn't exist or it is down");
+            }
         }
+
+
     }
 
-	private String getDomainRule(Task playbookTask) throws JobExecutionException {
-        ProxySOCKS5 proxy = playbookTask.ssh().getProxySOCKS5();
+	private String getProxyServerDomain(Task playbookTask, ProxySOCKS5 proxy) throws JobExecutionException {
+        MicroJobProxyBean proxyBean = playbookTask.getProxies().get(playbookTask.getThread().getProxyName());
+
+        int timeout = 5000;
+        if( playbookTask.getThread().getConnectionTimeout() > 0 ){
+            timeout = playbookTask.getThread().getConnectionTimeout();
+        }
         try {
             String serverAddrStr = playbookTask.getValue();
-            logger.debug("MXTerminal is trying first to connect, directly using "+serverAddrStr);
+            logger.debug("Micro-Server is trying to connect on "+serverAddrStr);
 
-            proxy.connect(null, playbookTask.getValue(), 22, 0);
+
+            proxy.connect(null, serverAddrStr, 22, timeout);
             proxy.getSocket().close();
             return serverAddrStr;
         } catch (Throwable e) {
-            if (playbookTask.getDomains() != null && playbookTask.getDomains().size() > 0) {
+            if (proxyBean.getDomains() != null && proxyBean.getDomains().size() > 0) {
                 return connectDomainRuleGateway(playbookTask, proxy);
             } else {
                 throw new JobExecutionException(e.getMessage());
@@ -88,7 +153,8 @@ public class JobQuartzThread implements Job {
         }
     }
 
-    private String connectDomainRuleGateway(Task playbookTask, ProxySOCKS5 proxy) {
+    private String connectDomainRuleGateway(Task playbookTask, ProxySOCKS5 proxy) throws JobExecutionException{
+        MicroJobProxyBean proxyBean = playbookTask.getProxies().get(playbookTask.getThread().getProxyName());
         logger.debug("Trying first, to connect directly without the DOMINIO");
 
         String serverAddrStr = playbookTask.getValue();
@@ -98,10 +164,15 @@ public class JobQuartzThread implements Job {
         Matcher matcherIP = patternIP.matcher( serverAddrStr );
 
         if( serverAddrStr.matches( regexIP ) && matcherIP.matches() ) {
-            return null;
+            throw new JobExecutionException("Address IP "+serverAddrStr+" doesn't exist");
         }
 
-        for(MicroJobDomainBean microJobDomainBean : playbookTask.getDomains()) {
+        int timeout = 5000;
+        if( playbookTask.getThread().getConnectionTimeout() > 0 ){
+            timeout = playbookTask.getThread().getConnectionTimeout();
+        }
+
+        for(MicroJobDomainBean microJobDomainBean : proxyBean.getDomains().values() ) {
             StringTokenizer token = new StringTokenizer(serverAddrStr, ".");
             String serverName = token.nextToken();
             String regex = microJobDomainBean.getRegexp();
@@ -122,16 +193,15 @@ public class JobQuartzThread implements Job {
 					 * If the gateway TIMEOUT was expired, we must disconnect
 					 * and connect again without TIMEOUT
 					 */
-                    try {
-                        proxy.connect(null, serverName, 22, 8000);
-                        proxy.getSocket().close();
-                        return serverName;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        logger.error("ConnectException"+e.getMessage());
-                    } catch (JSchException e) {
-                        e.printStackTrace();
-                        logger.error("ConnectException"+e.getMessage());
+					if( proxy != null ) {
+                        try {
+
+                            proxy.connect(null, serverName, 22, timeout);
+                            proxy.getSocket().close();
+                            return serverName;
+                        } catch (Throwable e) {
+                            logger.error("Application was trying to connect on " + serverName + " but doesn't exist");
+                        }
                     }
                 }
             }

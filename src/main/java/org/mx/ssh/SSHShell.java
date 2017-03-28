@@ -44,7 +44,7 @@ public class SSHShell {
 
         String result = connect.getThread().getOutput();
         result = splitter(result,"<mx-cmd>","<mx-cmd/>");
-        System.out.println(result);
+//        System.out.println(result);
 
         return result;
     }

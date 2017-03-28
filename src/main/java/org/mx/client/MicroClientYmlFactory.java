@@ -32,7 +32,7 @@ public class MicroClientYmlFactory {
         YAMLParser parser = factory.createParser(new File(ymlPath));
         MicroClientYml mclient = null;
 
-        MicroVariableMap microVariableMap = GlobalVariableService.getGlobalVariable();
+        MicroVariableMap microVariableMap = GlobalVariableService.getMicroServerEnvironmetVariable();
         int status = -1;
 
         while (parser.nextToken() != null) {

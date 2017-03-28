@@ -1,5 +1,6 @@
 package org.mx.repo;
 
+import org.jruby.ir.operands.Hash;
 import org.mx.action.MicroActionBean;
 import org.mx.job.*;
 import org.mx.module.MicroModule;
@@ -19,9 +20,7 @@ public class MicroRepositoryBean implements Cloneable {
 
     private Map<String, MicroModule> modules = new HashMap<String, MicroModule>();
 
-    private List<MicroJobProxyBean> proxies = new ArrayList<MicroJobProxyBean>();
-
-    private List< MicroJobDomainBean> domains = new ArrayList<MicroJobDomainBean>();
+    private Map<String, MicroJobProxyBean> proxies = new HashMap<String, MicroJobProxyBean>();
 
     private Map<String, MicroJobInventoryBean> inventories = new HashMap<String, MicroJobInventoryBean>();
 
@@ -75,20 +74,12 @@ public class MicroRepositoryBean implements Cloneable {
         this.modules.put(name,microModule);
     }
 
-    public List<MicroJobProxyBean> getProxies() {
+    public Map<String, MicroJobProxyBean> getProxies() {
         return proxies;
     }
 
-    public void addProxy(MicroJobProxyBean jobProxy) {
-        this.proxies.add(jobProxy);
-    }
-
-    public List< MicroJobDomainBean> getDomains() {
-        return domains;
-    }
-
-    public void addDomain(MicroJobDomainBean jobDomain) {
-        this.domains.add(jobDomain);
+    public void addProxy(String name, MicroJobProxyBean jobProxy) {
+        this.proxies.put(name, jobProxy);
     }
 
     public String getLogLevel() {

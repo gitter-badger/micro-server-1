@@ -43,7 +43,7 @@ public class MicroServerGateway {
         PARENT_BASEDIR = System.getProperty("parent.basedir");
 		String VAR_YML = PARENT_BASEDIR+ "/micro-env-variables.yml";
         MicroVariableMap variableMap = MicroVariableFactory.parser(VAR_YML);
-        GlobalVariableService.setGlobalVariable(variableMap);
+        GlobalVariableService.setMicroServerEnvironmetVariable(variableMap);
 
         BASEDIR = variableMap.get("basedir");
 
@@ -64,7 +64,7 @@ public class MicroServerGateway {
         GlobalVariableService.setMicroServer(mserverYml);
 
         MicroVariableMap varActionMap = MicroVariableFactory.parser(mserverYml.getRepositoryPath()+ "/micro-env-variables.yml");
-        GlobalVariableService.setActionVariableScope(varActionMap);
+        GlobalVariableService.setRepositoryEnvironmentVariable(varActionMap);
 
         System.setProperty("javax.net.ssl.keyStore",mserverYml.getKeystorePath());
         System.setProperty("javax.net.ssl.keyStorePassword",mserverYml.getKeystorePassword());

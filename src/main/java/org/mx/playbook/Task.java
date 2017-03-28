@@ -1,10 +1,14 @@
 package org.mx.playbook;
 
+import com.jcraft.jsch.JSchException;
+import org.apache.log4j.Logger;
 import org.mx.job.*;
+import org.mx.quartz.JobQuartzThread;
 import org.mx.repo.MicroRepositoryBean;
 import org.mx.ssh.SSHConnect;
 import org.mx.ssh.SSHShell;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +17,8 @@ import java.util.Map;
  * Created by fsbsilva on 3/15/17.
  */
 public class Task implements Cloneable {
+
+    private final static Logger logger = Logger.getLogger(Task.class);
 
     private SSHConnect sshConnect;
     private SSHShell sshShell;
@@ -27,8 +33,6 @@ public class Task implements Cloneable {
     private String moduleName;
     private String value;
     private MicroJobThreadBean thread;
-    private String username;
-    private String password;
 
     public Task(MicroRepositoryBean microRepository){
         this.microRepository = microRepository;
@@ -44,22 +48,6 @@ public class Task implements Cloneable {
 
     public void setValue(String value) {
         this.value = value;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String[] getArgs() {
@@ -134,12 +122,8 @@ public class Task implements Cloneable {
         return this.microRepository.getArguments();
     }
 
-    public List<MicroJobProxyBean> getProxies(){
+    public Map<String, MicroJobProxyBean> getProxies(){
         return this.microRepository.getProxies();
-    }
-
-    public List<MicroJobDomainBean> getDomains(){
-        return this.microRepository.getDomains();
     }
 
     public void setSSHConnect(SSHConnect sshConnect){
@@ -167,25 +151,54 @@ public class Task implements Cloneable {
     public void error(String value){
         if( logLevel.equals("ERROR")  )
             System.out.println("    "+value);
+        if( async ){
+            logger.error(value);
+        }
     }
 
     public void warn(String value){
         if( logLevel.equals("ERROR") || logLevel.equals("WARN")  )
             System.out.println("    "+value);
+        if( async ){
+            logger.warn(value);
+        }
     }
 
     public void info(String value){
         if( logLevel.equals("ERROR") || logLevel.equals("WARN") || logLevel.equals("INFO")  )
             System.out.println("    "+value);
+        if( async ){
+            logger.info(value);
+        }
+
     }
 
     public void debug(String value){
         if( logLevel.equals("ERROR") || logLevel.equals("INFO") || logLevel.equals("WARN") || logLevel.equals("DEBUG") )
             System.out.println("    "+value);
+        if( async ){
+            logger.debug(value);
+        }
+
     }
 
     public Task clone() throws CloneNotSupportedException {
         return (Task)super.clone();
+    }
+
+    public boolean isConnected(){
+        if( this.sshConnect != null && this.sshConnect.isConnected() ) {
+            return true;
+        }
+        return false;
+    }
+
+    public String sessionExec(String command) throws IOException, InterruptedException {
+        return ssh().sessionExec(command);
+    }
+
+    public String channelExec(String command) throws InterruptedException, JSchException, IOException {
+        return ssh().channelExec(command);
     }
 
 }

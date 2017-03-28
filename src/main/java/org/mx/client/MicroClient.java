@@ -68,7 +68,7 @@ public class MicroClient {
         String MCLIENT_YML_PATH = PARENT_BASEDIR+ "/micro-clients.yml";
 
         MicroVariableMap microVariableMap = MicroVariableFactory.parser(VAR_YML);
-        GlobalVariableService.setGlobalVariable(microVariableMap);
+        GlobalVariableService.setMicroServerEnvironmetVariable(microVariableMap);
 
         if( System.getProperty("mclient.chunktype")!= null ) {
             CHUNCKTYPE = Integer.valueOf(System.getProperty("mclient.chunktype"));
