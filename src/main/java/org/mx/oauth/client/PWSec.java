@@ -17,11 +17,14 @@
 */
 package org.mx.oauth.client;
 
+import org.mx.server.GlobalVariableService;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -32,7 +35,14 @@ public class PWSec {
   private String encryptionMode = "ECB";
   private String encryptionPadding = "PKCS5Padding";
   private String ENCRYPTED_KEY = "41254157g5o9s7h8m3e612awpmon!5jk";
-  
+
+  public PWSec(){
+      String encryptKey = GlobalVariableService.getMicroServer().getEncryptKey();
+      if( encryptKey != null || !encryptKey.isEmpty()){
+          ENCRYPTED_KEY=encryptKey;
+      }
+  }
+
   public String getMessageDigest(String password){
       String string ="a";
       MessageDigest m;     
@@ -52,7 +62,7 @@ public class PWSec {
   }
     
   public String decrypt(String passwordEncrypted){
-      return encryptText(passwordEncrypted, ENCRYPTED_KEY);
+      return decryptText(passwordEncrypted, ENCRYPTED_KEY);
   }
     
   public String encrypt(String passwordText) {
@@ -99,7 +109,7 @@ public class PWSec {
         byte clearTextBytes[];
         clearTextBytes = text.getBytes();
         byte[] encryptedText = c1.doFinal(clearTextBytes);
-        String encryptedEncodedText = Base64.getEncoder().encode(encryptedText).toString();
+        String encryptedEncodedText = Base64.getEncoder().encodeToString(encryptedText);
         return encryptedEncodedText;
 
       } else {

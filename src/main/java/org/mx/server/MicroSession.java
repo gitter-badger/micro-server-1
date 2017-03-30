@@ -94,7 +94,7 @@ public class MicroSession extends MicroSessionImpl {
                             }
                             logger.debug("Running JobQuartzScheduled");
 
-                            MicroServer mserverYml = GlobalVariableService.getMicroServer();
+                            MicroServerBean mserverYml = GlobalVariableService.getMicroServer();
 
                             microRepository = GlobalVariableService.getMicroRepository();
 

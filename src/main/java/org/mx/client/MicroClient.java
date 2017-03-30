@@ -2,8 +2,8 @@ package org.mx.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mx.server.GlobalVariableService;
+import org.mx.server.MicroServerBean;
 import org.mx.server.MicroServerFactory;
-import org.mx.server.MicroServer;
 import org.mx.var.MicroVariableFactory;
 import org.mx.var.MicroVariableMap;
 
@@ -92,7 +92,7 @@ public class MicroClient {
             if( MSERVER_NAME == null ){
                 MSERVER_NAME=microVariableMap.get("mserver.name");
             }
-            MicroServer microServer = MicroServerFactory.parser(BASEDIR+"/micro-servers.yml").get(MSERVER_NAME);
+            MicroServerBean microServer = MicroServerFactory.parser(BASEDIR+"/micro-servers.yml").get(MSERVER_NAME);
             MSERVER_HOST= microServer.getHost();
             MSERVER_PORT= microServer.getPort();
 
@@ -142,31 +142,7 @@ public class MicroClient {
                 session.setASync(this.MCLIENT_ASYNC);
             }
 
-            boolean skip=false;
-            List<String> argList = new ArrayList<String>();
-            if( args.length > 0 ){
-                for (String arg : args) {
-                    System.out.println(arg);
-                    if( arg.equals("--run") || (arg.equals("--client") || arg.equals("--server")) ) {
-                        skip = true;
-                        continue;
-                    } else if( arg.equals("--list-threads")){
-                        continue;
-                    } else if ( skip ){
-                        skip=false;
-                        continue;
-                    } else {
-                        argList.add(arg);
-                    }
-                }
-            }
-            if( argList.size() > 0 ){
-                String[] arg2 = (String[]) argList.toArray();
-                session.setArgs(arg2);
-            } else {
-                String[] arg2 = new String[]{};
-                session.setArgs(arg2);
-            }
+            session.setArgs(args);
 
             ObjectMapper objectMapper = new ObjectMapper();
 

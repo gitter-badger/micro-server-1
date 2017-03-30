@@ -1,5 +1,6 @@
 package org.mx.server;
 
+import groovy.lang.Binding;
 import org.apache.log4j.Logger;
 import org.jruby.embed.ScriptingContainer;
 import org.mx.playbook.Task;
@@ -140,10 +141,10 @@ public class ScriptGateway {
 
     private void executeGroovy(Task task) throws JobExecutionException {
         try {
-            GroovyShell shell = new GroovyShell(ScriptGateway.class.getClassLoader());
-            shell.setVariable("task",task);
-            shell.setVariable("data",task.getData().get("data"));
-
+            Binding binding = new Binding();
+            binding.setVariable("task",task);
+            GroovyShell shell = new GroovyShell(ScriptGateway.class.getClassLoader(),binding);
+//            shell.setProperty("task",task);
             shell.run(new File(task.getSource()), task.getArgs());
         } catch (Throwable e) {
             e.printStackTrace();

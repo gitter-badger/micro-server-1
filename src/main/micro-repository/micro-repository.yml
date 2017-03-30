@@ -71,5 +71,8 @@ micro-actions:
     src: ${modules.basedir}/hello/hello-playbook.yml
     async: false
 
+  - name: encrypt
+    src: ${modules.basedir}/secret/EncryptPassword.groovy
+    async: false
 
 ...

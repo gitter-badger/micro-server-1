@@ -3,6 +3,8 @@ package org.mx.server;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.mx.action.MicroActionBean;
+import org.mx.oauth.client.Credential;
+import org.mx.oauth.client.PWSec;
 import org.mx.repo.MicroRepositoryBean;
 import org.mx.client.MicroConstants;
 import org.mx.quartz.JobQuartzSchedulerFactory;
@@ -34,7 +36,7 @@ public class MicroServerGateway {
 	private String PARENT_BASEDIR;
 	private String BASEDIR;
     private String MSERVER_NAME=null;
-    private MicroServer mserverYml;
+    private MicroServerBean mserverYml;
 	private int timeoutMillis = 10;
 
 	public Map<String, MicroActionBean> microActionMap;
@@ -66,8 +68,15 @@ public class MicroServerGateway {
         MicroVariableMap varActionMap = MicroVariableFactory.parser(mserverYml.getRepositoryPath()+ "/micro-env-variables.yml");
         GlobalVariableService.setRepositoryEnvironmentVariable(varActionMap);
 
+		String keystorePassword = mserverYml.getKeystorePassword().trim();
+		if( keystorePassword.startsWith("${") && keystorePassword.endsWith("}")){
+			keystorePassword = keystorePassword.substring(2,keystorePassword.length()-1);
+			PWSec pwsec = new PWSec();
+			keystorePassword = pwsec.decrypt(keystorePassword);
+			System.out.println(keystorePassword);
+		}
         System.setProperty("javax.net.ssl.keyStore",mserverYml.getKeystorePath());
-        System.setProperty("javax.net.ssl.keyStorePassword",mserverYml.getKeystorePassword());
+        System.setProperty("javax.net.ssl.keyStorePassword",keystorePassword);
         System.setProperty("java.protocol.handler.pkgs",mserverYml.getKeystorePkgs());
         PropertyConfigurator.configure(mserverYml.getLog4jPath());
 

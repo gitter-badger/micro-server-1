@@ -3,7 +3,7 @@ package org.mx.server;
 /**
  * Created by fsbsilva on 1/1/17.
  */
-public class MicroServer {
+public class MicroServerBean {
 
     private String name;
     private String host;
@@ -13,6 +13,7 @@ public class MicroServer {
     private String keystorePassword;
     private String keystorePkgs;
     private String log4jPath;
+    private String encryptKey;
 
     public String getLog4jPath() {
         return log4jPath;
@@ -76,5 +77,13 @@ public class MicroServer {
 
     public void setKeystorePkgs(String keystorePkgs) {
         this.keystorePkgs = keystorePkgs;
+    }
+
+    public String getEncryptKey() {
+        return encryptKey;
+    }
+
+    public void setEncryptKey(String encryptKey) {
+        this.encryptKey = encryptKey;
     }
 }

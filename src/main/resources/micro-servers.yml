@@ -16,10 +16,11 @@ micro-servers:
           port: 25000
           repository_path: ${parent.basedir}/micro-repository
           keystore_path: ${basedir}/src/main/resources/cacerts
-          keystore_password: password01
+          keystore_password: ${zBfOdNyx/l3WPE/7KBVBPw==}
           keystore_pkgs: com.sun.net.ssl.internal.www.protocol
           log4j_path: ${basedir}/log4j.properties
           repo_name: micro-actions1
+          encrypt_key: 41254157g5o9s7h8m3e612awpmon!5jk
 
     - micro-server2:
           host: localhost
@@ -30,6 +31,7 @@ micro-servers:
           keystore_password: password01
           keystore_pkgs: com.sun.net.ssl.internal.www.protocol
           log4j_path: ${basedir}/log4j.properties
+          encrypt_key: 41254157g5o9s7h8m3e612awpmon!5jk
 
 ...
 

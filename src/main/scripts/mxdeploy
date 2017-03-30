@@ -203,6 +203,8 @@ SCRIPT_ACTION="--list-threads"
 MSERVER_NAME=`grep mserver.name: $MX_PARENT/micro-env-variables.yml | cut -d':' -f2 | xargs`
 RESTART_ACTION="None"
 ACTION_MODULE="None"
+ARGS="None"
+START_ARGS=0
 
 while [ $# -gt 0 ]
 do
@@ -241,16 +243,33 @@ do
         --run | -r )
             SCRIPT_ACTION="--run"
             ACTION_NAME=$2
+            START_ARGS=1
             debug "ACTION_NAME: $ACTION_NAME"
+            shift
             ;;
         --restart-run | -rr )
             SCRIPT_ACTION="--restart-run"
             ACTION_NAME=$2
+            START_ARGS=1
             debug "ACTION_NAME: $ACTION_NAME"
+            shift
             ;;
         --module | -m )
             ACTION_MODULE=$2
             debug "ACTION_MODULE: $ACTION_MODULE"
+            ;;
+         * )
+            debug "ARGUMENT: $1"
+            if [ $START_ARGS -eq 1 ]; then
+                if [ $ARGS == "None" ]
+                then
+                    debug "ARGS: $ARGS"
+                    ARGS=$1
+                else
+                    ARGS="$ARGS $1"
+                    debug "ARGS: $ARGS"
+                fi
+            fi
             ;;
     esac
     shift
@@ -316,10 +335,11 @@ case "$SCRIPT_ACTION" in
             MX_JAVA_PROPERTIES_CLIENT="$MX_JAVA_PROPERTIES_CLIENT -Dmodule.name=$ACTION_MODULE "
         fi
         debug "MX_JAVA_PROPERTIES_CLIENT=$MX_JAVA_PROPERTIES_CLIENT"
+        debug "$MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT -cp "$MX_JAVA_CLASSPATH/*" org.mx.client.MicroClient $ARGS"
 
         $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.client.MicroClient $*
+                   org.mx.client.MicroClient $ARGS
 
         ;;
     --restart-run )
@@ -336,10 +356,11 @@ case "$SCRIPT_ACTION" in
         fi
 
         debug "MX_JAVA_PROPERTIES_CLIENT=$MX_JAVA_PROPERTIES_CLIENT"
+        debug "$MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT -cp "$MX_JAVA_CLASSPATH/*" org.mx.client.MicroClient $ARGS"
 
         $MX_JAVA -server $MX_JAVA_OPTION $MX_JAVA_PROPERTIES_CLIENT \
                   -cp "$MX_JAVA_CLASSPATH/*" \
-                   org.mx.client.MicroClient $*
+                   org.mx.client.MicroClient $ARGS
 
         ;;
 

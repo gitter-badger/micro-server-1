@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class MicroServerFactory {
 
-    private static Map<String, MicroServer> mserverMap = null;
+    private static Map<String, MicroServerBean> mserverMap = null;
     //private static Logger logger = Logger.getLogger(MicroServerFactory.class);
 
     public static void main(String[] args){
@@ -30,12 +30,12 @@ public class MicroServerFactory {
         }
     }
 
-    public static Map<String, MicroServer> parser(String ymlPath) throws IOException {
-        mserverMap = new HashMap<String, MicroServer>();
+    public static Map<String, MicroServerBean> parser(String ymlPath) throws IOException {
+        mserverMap = new HashMap<String, MicroServerBean>();
 
         YAMLFactory factory = new YAMLFactory();
         YAMLParser parser = factory.createParser(new File(ymlPath));
-        MicroServer mserver = null;
+        MicroServerBean mserver = null;
         MicroVariableMap microVariableMap = GlobalVariableService.getMicroServerEnvironmetVariable();
         int status = -1;
 
@@ -83,11 +83,14 @@ public class MicroServerFactory {
                         value = microVariableMap.replace(value);
                         //logger.debug(value);
                         mserver.setLog4jPath(value);
+                    } else if (parser.getCurrentName().equals("encrypt_key")) {
+                        String value = parser.nextTextValue();
+                        mserver.setEncryptKey(value);
                     }
 
                 }
             } else if (parser.getCurrentToken().name().equals("START_OBJECT") && status == 0) {
-                mserver = new MicroServer();
+                mserver = new MicroServerBean();
                 status = 1;
             } else if (status == 2 && parser.getCurrentToken().name().equals("END_OBJECT")) {
                 status = 0;

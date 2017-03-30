@@ -13,7 +13,7 @@ public class GlobalVariableService {
 
     private static MicroVariableMap microServerEnvironmetVariable;
     private static MicroVariableMap repositoryEnvironmentVariable;
-    private static MicroServer microServer;
+    private static MicroServerBean microServer;
     private static MicroRepositoryBean microRepository;
     private static HashMap<String,Scheduler> threads = new HashMap<String,Scheduler>();
 
@@ -25,11 +25,11 @@ public class GlobalVariableService {
         GlobalVariableService.microServerEnvironmetVariable = microServerEnvironmetVariable;
     }
 
-    public static MicroServer getMicroServer() {
+    public static MicroServerBean getMicroServer() {
         return microServer;
     }
 
-    public static void setMicroServer(MicroServer microServer) {
+    public static void setMicroServer(MicroServerBean microServer) {
         GlobalVariableService.microServer = microServer;
     }
 
